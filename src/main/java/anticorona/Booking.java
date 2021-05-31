@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Date;
 
 @Entity
-@Table(name="Booking_table")
+@Table(name="Booking")
 public class Booking extends ResourceSupport {
 
     @Id
