@@ -2,12 +2,14 @@ package anticorona;
 
 import javax.persistence.*;
 import org.springframework.beans.BeanUtils;
+import org.springframework.hateoas.ResourceSupport;
+
 import java.util.List;
 import java.util.Date;
 
 @Entity
 @Table(name="Booking_table")
-public class Booking {
+public class Booking extends ResourceSupport {
 
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
@@ -18,38 +20,27 @@ public class Booking {
     private String status;
 
     @PostPersist
-    public void onPostPersist(){
-        Booked booked = new Booked();
-        BeanUtils.copyProperties(this, booked);
-        booked.publishAfterCommit();
-
-        //Following code causes dependency to external APIs
-        // it is NOT A GOOD PRACTICE. instead, Event-Policy mapping is recommended.
-
-        anticorona.external.Vaccine vaccine = new anticorona.external.Vaccine();
-        // mappings goes here
-        // BookingApplication.applicationContext.getBean(anticorona.external.VaccineService.class)
-        //     .chkAndModifyStock(vaccine);
-
-
-    }
-
-    @PostUpdate
-    public void onPostUpdate(){
-        BookUpdated bookUpdated = new BookUpdated();
-        BeanUtils.copyProperties(this, bookUpdated);
-        bookUpdated.publishAfterCommit();
-
+    public void onPostPersist() throws Exception {
+        if(BookingApplication.applicationContext.getBean(anticorona.external.VaccineService.class)
+            .checkAndBookStock(this.vaccineId)){
+                Booked booked = new Booked();
+                BeanUtils.copyProperties(this, booked);
+                booked.publishAfterCommit();
+            }
+        else{
+            throw new Exception("Out of Stock Exception Raised.");
+        }
 
     }
 
     @PreUpdate
-    public void onPreUpdate(){
-        BookCancelled bookCancelled = new BookCancelled();
-        BeanUtils.copyProperties(this, bookCancelled);
-        bookCancelled.publishAfterCommit();
-
-
+    @PostRemove
+    public void onCancelled(){
+        if("BOOKING_CANCELLED".equals(this.status)){
+            BookingCancelled bookingCancelled = new BookingCancelled();
+            BeanUtils.copyProperties(this, bookingCancelled);
+            bookingCancelled.publishAfterCommit();
+        }
     }
 
 

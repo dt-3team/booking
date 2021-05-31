@@ -13,11 +13,11 @@ public class PolicyHandler{
     @Autowired BookingRepository bookingRepository;
 
     @StreamListener(KafkaProcessor.INPUT)
-    public void wheneverVcCompleted_UpdateStatus(@Payload VcCompleted vcCompleted){
+    public void wheneverCompleted_UpdateStatus(@Payload Completed completed){
 
-        if(!vcCompleted.validate()) return;
+        if(!completed.validate()) return;
 
-        System.out.println("\n\n##### listener UpdateStatus : " + vcCompleted.toJson() + "\n\n");
+        System.out.println("\n\n##### listener UpdateStatus : " + completed.toJson() + "\n\n");
 
         // Sample Logic //
         Booking booking = new Booking();
