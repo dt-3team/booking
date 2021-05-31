@@ -35,3 +35,10 @@ spec:
             timeoutSeconds: 2
             periodSeconds: 5
             failureThreshold: 5
+          volumeMounts:
+            - name: volume
+              mountPath: "/mnt/azure"
+      volumes:
+      - name: volume
+        persistentVolumeClaim:
+          claimName: injection-disk
