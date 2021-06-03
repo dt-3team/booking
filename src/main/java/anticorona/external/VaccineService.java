@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Date;
 
-@FeignClient(name="vaccine", url="http://vaccine:8080")
+@FeignClient(name="vaccine", url="http://${api.url.vaccine}:8080")
 public interface VaccineService {
 
     @RequestMapping(method= RequestMethod.GET, path="/vaccines/checkAndBookStock")
