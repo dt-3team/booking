@@ -20,6 +20,12 @@ spec:
           image: skccanticorona.azurecr.io/booking:latest
           ports:
             - containerPort: 8080
+          env:
+            - name: vaccine-url
+              valueFrom:
+                configMapKeyRef:
+                  name: apiurl
+                  key: url
           readinessProbe:
             httpGet:
               path: '/actuator/health'
