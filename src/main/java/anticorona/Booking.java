@@ -19,6 +19,11 @@ public class Booking extends ResourceSupport {
     private Long userId;
     private String status;
 
+    @PrePersist
+    public void onPrePersist(){
+        this.setStatus("BOOKED");
+    }
+
     @PostPersist
     public void onPostPersist() throws Exception {
         if(BookingApplication.applicationContext.getBean(anticorona.external.VaccineService.class)
