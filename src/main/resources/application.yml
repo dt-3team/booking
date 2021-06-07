@@ -62,6 +62,10 @@ spring:
         event-out:
           destination: anticorona
           contentType: application/json
+logging:
+  level:
+    root: info
+  file: /mnt/azure/logs/booking.log
 api: 
   url: 
     vaccine: ${vaccine-url}
